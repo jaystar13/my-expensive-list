@@ -24,7 +24,26 @@ def create_criteria(since_date):
     if since_date:
         search_criteria += ["SINCE", format_imap_date(since_date)]
 
-    return search_criteria   
+    return search_criteria
+
+def save_attachment(msg, save_folder):
+    """이메일에서 첨부 파일 저장"""
+
+    for part in msg.walk():
+        content_disposition = part.get("Content-Disposition", "")
+        if part.get_content_maintype() == "multipart" or not content_disposition:
+            continue  # 본문이거나 첨부파일이 없으면 스킵
+
+        filename, encoding = decode_header(part.get_filename() or "")[0]
+        if isinstance(filename, bytes):
+            filename = filename.decode(encoding or "utf-8")
+
+        if filename:
+            filepath = os.path.join(save_folder, filename)
+            with open(filepath, "wb") as f:
+                f.write(part.get_payload(decode=True))
+
+    return [os.path.join(save_folder, filename) for filename in os.listdir(save_folder) if os.path.isfile(os.path.join(save_folder, filename))]    
 
 class NaverMailClient:
     """네이버 메일에서 특정 정규식 패턴과 일치하는 메일을 검색하는 클래스"""
@@ -38,25 +57,6 @@ class NaverMailClient:
         """이메일 제목 디코딩"""
         decoded, encoding = decode_header(subject)[0]
         return decoded.decode(encoding) if isinstance(decoded, bytes) else decoded
-    
-    def save_attachment(self, msg, save_folder):
-        """이메일에서 첨부 파일 저장"""
-
-        for part in msg.walk():
-            content_disposition = part.get("Content-Disposition", "")
-            if part.get_content_maintype() == "multipart" or not content_disposition:
-                continue  # 본문이거나 첨부파일이 없으면 스킵
-
-            filename, encoding = decode_header(part.get_filename() or "")[0]
-            if isinstance(filename, bytes):
-                filename = filename.decode(encoding or "utf-8")
-
-            if filename:
-                filepath = os.path.join(save_folder, filename)
-                with open(filepath, "wb") as f:
-                    f.write(part.get_payload(decode=True))
-
-        return [os.path.join(save_folder, filename) for filename in os.listdir(save_folder) if os.path.isfile(os.path.join(save_folder, filename))]    
     
     def fetch_emails(self, search_criteria, patterns):
         """작성년월에 해당하는 메일을 검색하여 키워드 포함 메일 반환"""
@@ -79,7 +79,7 @@ class NaverMailClient:
 
                     # 정규식으로 제목 필터링
                     if keyword_regex.search(subject):
-                        self.save_attachment(msg, ATTACH_FOLDER)  # 첨부 파일 저장
+                        save_attachment(msg, ATTACH_FOLDER)  # 첨부 파일 저장
                         matching_mails.append(subject)
 
         except imaplib.IMAP4.error as e:
@@ -111,8 +111,8 @@ class ExpenseApp(QtWidgets.QMainWindow):
     def on_execute(self):
         naver_id = self.naverId.text()
         naver_password = self.naverPassword.text()
-        qdate = self.targetYearMonth.date().toString('yyyy-MM-dd')
-        selected_date = datetime.strptime(qdate, "%Y-%m-%d").date()
+        qdate = self.targetYearMonth.date().toString('yyyy-MM')
+        selected_date = datetime.strptime(qdate, "%Y-%m").date()
 
         mail_extract_status = self.maiExtractStatus
         mail_extract_status.setText("로그인 중...")
