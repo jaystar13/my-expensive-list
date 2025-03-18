@@ -8,10 +8,7 @@ from email.header import decode_header
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QDateTimeEdit
 
-SAVE_FOLDER = "downloads"
-ATTACH_FOLDER = SAVE_FOLDER + "/attach"
-os.makedirs(SAVE_FOLDER, exist_ok=True)
-os.makedirs(ATTACH_FOLDER, exist_ok=True)
+ATTACH_FOLDER = "downloads/attach"
 
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
@@ -26,22 +23,39 @@ def create_criteria(since_date):
 
     return search_criteria
 
-def save_attachment(msg, save_folder):
+def save_attachment(emails, save_folder):
     """이메일에서 첨부 파일 저장"""
 
-    for part in msg.walk():
-        content_disposition = part.get("Content-Disposition", "")
-        if part.get_content_maintype() == "multipart" or not content_disposition:
-            continue  # 본문이거나 첨부파일이 없으면 스킵
+    os.makedirs(save_folder, exist_ok=True)
 
-        filename, encoding = decode_header(part.get_filename() or "")[0]
-        if isinstance(filename, bytes):
-            filename = filename.decode(encoding or "utf-8")
+    for msg in emails:
+        for part in msg.walk():
+            content_disposition = part.get("Content-Disposition", "")
+            if part.get_content_maintype() == "multipart" or not content_disposition:
+                continue  # 본문이거나 첨부파일이 없으면 스킵
 
-        if filename:
-            filepath = os.path.join(save_folder, filename)
-            with open(filepath, "wb") as f:
-                f.write(part.get_payload(decode=True))
+            filename, encoding = decode_header(part.get_filename() or "")[0]
+            if isinstance(filename, bytes):
+                filename = filename.decode(encoding or "utf-8")
+
+            if filename:
+                filepath = os.path.join(save_folder, filename)
+                with open(filepath, "wb") as f:
+                    f.write(part.get_payload(decode=True))    
+
+    # for part in msg.walk():
+    #     content_disposition = part.get("Content-Disposition", "")
+    #     if part.get_content_maintype() == "multipart" or not content_disposition:
+    #         continue  # 본문이거나 첨부파일이 없으면 스킵
+
+    #     filename, encoding = decode_header(part.get_filename() or "")[0]
+    #     if isinstance(filename, bytes):
+    #         filename = filename.decode(encoding or "utf-8")
+
+    #     if filename:
+    #         filepath = os.path.join(save_folder, filename)
+    #         with open(filepath, "wb") as f:
+    #             f.write(part.get_payload(decode=True))
 
     return [os.path.join(save_folder, filename) for filename in os.listdir(save_folder) if os.path.isfile(os.path.join(save_folder, filename))]    
 
@@ -79,8 +93,9 @@ class NaverMailClient:
 
                     # 정규식으로 제목 필터링
                     if keyword_regex.search(subject):
-                        save_attachment(msg, ATTACH_FOLDER)  # 첨부 파일 저장
-                        matching_mails.append(subject)
+                        # save_attachment(msg, ATTACH_FOLDER)  # 첨부 파일 저장
+                        # matching_mails.append(subject)
+                        matching_mails.append(msg)
 
         except imaplib.IMAP4.error as e:
             print(f"IMAP 오류 발생: {e}")
@@ -111,8 +126,8 @@ class ExpenseApp(QtWidgets.QMainWindow):
     def on_execute(self):
         naver_id = self.naverId.text()
         naver_password = self.naverPassword.text()
-        qdate = self.targetYearMonth.date().toString('yyyy-MM')
-        selected_date = datetime.strptime(qdate, "%Y-%m").date()
+        targetDate = self.targetYearMonth.date().toString('yyyy-MM')
+        selected_date = datetime.strptime(targetDate, "%Y-%m").date()
 
         mail_extract_status = self.maiExtractStatus
         mail_extract_status.setText("로그인 중...")
@@ -132,12 +147,11 @@ class ExpenseApp(QtWidgets.QMainWindow):
         QtWidgets.QApplication.processEvents()
 
         matching_emails = mail_client.fetch_emails(search_criteria, selected_patterns)
-        mail_extract_status.setText("완료")
 
-        # 결과 출력
-        # print("\n=== 검색된 메일 ===")
-        # for mail in matching_emails:
-        #     print(f"📩 {mail}")
+        targetAttachFolder = ATTACH_FOLDER + "/" + targetDate
+        save_attachment(matching_emails, targetAttachFolder)
+
+        mail_extract_status.setText("완료")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
