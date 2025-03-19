@@ -118,7 +118,7 @@ class ExpenseApp(QtWidgets.QMainWindow):
 
     def __init__(self):
         super().__init__()
-        uic.loadUi("spent-form.ui", self)  # UI 파일 로드
+        uic.loadUi("mail-extractor.ui", self)  # UI 파일 로드
 
         # 실행 버튼 클릭 이벤트 연결
         self.extractSpentMail.clicked.connect(self.on_execute)
