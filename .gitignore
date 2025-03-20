@@ -1,5 +1,22 @@
 /downloads
 
+# macOS
+.DS_Store
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
+
+# Node.js
+node_modules/
+
+# 환경 변수 파일
+.env
+
+# 로그 파일
+*.log
+
+# IDE 설정 폴더
+.vscode/
+.idea/
