@@ -11,7 +11,7 @@ class DataCleaner(QtWidgets.QMainWindow):
 
     def __init__(self):
         super().__init__()
-        uic.loadUi("data-cleaner.ui", self)
+        uic.loadUi("gui/data-cleaner.ui", self)
 
         targetPath = self.targetPath.text()
         targetDate = self.targetYearMonth.date().toString('yyyy-MM')

@@ -1,4 +1,4 @@
-from bank_processors import BankProcessor
+from processors.bank_processors import BankProcessor
 
 class ShinhanProcessor(BankProcessor):
     def process(self, file_path):
