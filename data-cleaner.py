@@ -39,17 +39,19 @@ class DataCleaner(QtWidgets.QMainWindow):
             print("디렉토리에 파일이 없습니다.")
             return
 
+        transactions = []
         for file_name in files:
             file_path = os.path.join(self.directory_path, file_name)
             if os.path.isfile(file_path):
-                self.execute_bank_function(file_name, file_path)
+                transactions.append(self.execute_bank_function(file_name, file_path))
+
+        print(f"transactions: {transactions}")
 
     def execute_bank_function(self, file_name, file_path):
         """파일명을 기준으로 적절한 처리 클래스 실행"""
         for key, processor in self.bank_processors.items():
             if key in file_name:
-                processor.process(file_path)
-                return
+                return processor.process(file_path)
 
         print(f"알 수 없는 파일 형식: {file_name}")
 

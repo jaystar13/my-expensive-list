@@ -7,12 +7,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 from bs4 import BeautifulSoup
+from processors.response import FinancialTransaction
 
 PASSWORD = "791227"
 
 class KBProcessor(BankProcessor):
     def process(self, file_path):
-        print(f"KB은행 데이터 처리 중: {file_path}")
         service = Service(ChromeDriverManager().install())
         options = webdriver.ChromeOptions()
         options.add_argument("--headless") # 브라우저 UI 없이 실행
@@ -31,7 +31,9 @@ class KBProcessor(BankProcessor):
         page_source = driver.page_source
         driver.quit()
 
-        self.cleaner(page_source)
+        transactions = self.cleaner(page_source)
+
+        return FinancialTransaction(financial="KB", transactions=transactions)
 
     def cleaner(self, page_source):
         soup = BeautifulSoup(page_source, 'html.parser')
@@ -39,7 +41,7 @@ class KBProcessor(BankProcessor):
         table = soup.find("table", id="usage1")
         tbody = table.find("tbody", id="list_pe01")
 
-        data = []
+        transactions = []
         for row in tbody.find_all("tr"):
             cols = row.find_all("td")
             if len(cols) < 6:
@@ -51,11 +53,11 @@ class KBProcessor(BankProcessor):
             amount = cols[5].get_text(strip=True) # 이용금액
 
             if card_name or card_name.strip() != "":
-                data.append({
-                    "이용일자": usage_date,
-                    "이용카드": card_name,
-                    "가맹점": merchant,
-                    "이용금액": amount,
+                transactions.append({
+                    "date": usage_date,
+                    "cardName": card_name,
+                    "merchant": merchant,
+                    "amount": int(amount.replace(",", "").replace("₩", "")),
                 })
 
-        return data
+        return transactions
