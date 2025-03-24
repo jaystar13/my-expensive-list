@@ -20,9 +20,9 @@ class DataCleaner(QtWidgets.QMainWindow):
 
         # 은행명과 처리 클래스 매핑
         self.bank_processors = {
-            "KB": KBProcessor(),
-            "Shinhan": ShinhanProcessor(),
-            "hanacard": HanaCardProcessor(),
+            # "KB": KBProcessor(),
+            # "Shinhan": ShinhanProcessor(),
+            # "hanacard": HanaCardProcessor(),
             "케이뱅크": KbankProcessor()
         }
 

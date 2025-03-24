@@ -1,4 +1,5 @@
 from processors.bank_processors import BankProcessor
+from processors.response import FinancialTransaction
 
 import msoffcrypto
 import io
@@ -17,16 +18,26 @@ class KbankProcessor(BankProcessor):
                 office_file.load_key(password=PASSWORD)
                 office_file.decrypt(decrypted)
 
-            wb = load_workbook(filename=decrypted, read_only=True)
-            sheet = wb.active
+            df = pd.read_excel(decrypted, engine="openpyxl", header=3)
 
-            data = []
-            for row in sheet.iter_rows(values_only=True):
-                data.append(row)
+            transactions = []
+            for index, row in df.iterrows():
+                # 체크결제 이용내역만 대상
+                if row["거래구분"] == "체크결제":
+                    usage_date = row["거래일시"] # 일자
+                    card_name = "케이뱅크" # 카드명칭
+                    merchant = row["적요내용"] # 가맹점
+                    amount = row["출금금액"] # 이용금액
 
-            df = pd.DataFrame(data[1:], columns=data[0])
-            print(f"DateFrame : {df.head()}")
+                    transactions.append({
+                        "date": usage_date,
+                        "cardName": card_name,
+                        "merchant": merchant,
+                        "amount": int(amount.replace(",", "").replace("₩", "")),
+                    })                    
         
         except Exception as e:
             print(f"파일을 읽는 중 오류 발생: {e}")
             return None
+        
+        return FinancialTransaction(financial="KBank", transactions=transactions)
