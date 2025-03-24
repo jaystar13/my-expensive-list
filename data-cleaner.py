@@ -20,7 +20,7 @@ class DataCleaner(QtWidgets.QMainWindow):
 
         # 은행명과 처리 클래스 매핑
         self.bank_processors = {
-            # "KB": KBProcessor(),
+            "KB": KBProcessor(),
             # "Shinhan": ShinhanProcessor(),
             # "hanacard": HanaCardProcessor(),
             "케이뱅크": KbankProcessor()
@@ -30,6 +30,8 @@ class DataCleaner(QtWidgets.QMainWindow):
 
     def on_execute(self):
         """지정된 경로에서 파일을 순회하며 은행별 함수 실행"""
+        self.pwd = self.password.text()
+
         if not os.path.isdir(self.directory_path):
             print(f"경로가 유효하지 않습니다: {self.directory_path}")
             return
@@ -51,7 +53,7 @@ class DataCleaner(QtWidgets.QMainWindow):
         """파일명을 기준으로 적절한 처리 클래스 실행"""
         for key, processor in self.bank_processors.items():
             if key in file_name:
-                return processor.process(file_path)
+                return processor.process(file_path, self.pwd)
 
         print(f"알 수 없는 파일 형식: {file_name}")
 

@@ -9,10 +9,9 @@ import time
 from bs4 import BeautifulSoup
 from processors.response import FinancialTransaction
 
-PASSWORD = "791227"
-
 class KBProcessor(BankProcessor):
-    def process(self, file_path):
+    def process(self, file_path, password):
+        print(f"password : {password}")
         service = Service(ChromeDriverManager().install())
         options = webdriver.ChromeOptions()
         options.add_argument("--headless") # 브라우저 UI 없이 실행
@@ -23,7 +22,7 @@ class KBProcessor(BankProcessor):
         driver.get(f"file://{os.path.abspath(file_path)}")
 
         password_field = driver.find_element(By.ID, "password")
-        password_field.send_keys(PASSWORD)
+        password_field.send_keys(password)
         password_field.send_keys(Keys.RETURN)
 
         time.sleep(3)
@@ -54,7 +53,7 @@ class KBProcessor(BankProcessor):
 
             if card_name or card_name.strip() != "":
                 transactions.append({
-                    "date": usage_date,
+                    "date": "20" + usage_date.replace(".", "-"),
                     "cardName": card_name,
                     "merchant": merchant,
                     "amount": int(amount.replace(",", "").replace("₩", "")),

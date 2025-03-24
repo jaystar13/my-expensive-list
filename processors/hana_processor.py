@@ -1,5 +1,5 @@
 from processors.bank_processors import BankProcessor
 
 class HanaCardProcessor(BankProcessor):
-    def process(self, file_path):
+    def process(self, file_path, password):
         print(f"하나카드 데이터 처리 중: {file_path}")

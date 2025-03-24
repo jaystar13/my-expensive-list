@@ -6,16 +6,14 @@ import io
 import pandas as pd
 from openpyxl import load_workbook
 
-PASSWORD = "791227"
-
 class KbankProcessor(BankProcessor):
-    def process(self, file_path):
+    def process(self, file_path, password):
         print(f"케이뱅크 데이터 처리 중: {file_path}")
         try:
             decrypted = io.BytesIO()
             with open(file_path, "rb") as f:
                 office_file = msoffcrypto.OfficeFile(f)
-                office_file.load_key(password=PASSWORD)
+                office_file.load_key(password=password)
                 office_file.decrypt(decrypted)
 
             df = pd.read_excel(decrypted, engine="openpyxl", header=3)
@@ -28,12 +26,12 @@ class KbankProcessor(BankProcessor):
                     card_name = "케이뱅크" # 카드명칭
                     merchant = row["적요내용"] # 가맹점
                     amount = row["출금금액"] # 이용금액
-
+                    
                     transactions.append({
-                        "date": usage_date,
+                        "date": usage_date.split()[0].replace(".", "-"),
                         "cardName": card_name,
                         "merchant": merchant,
-                        "amount": int(amount.replace(",", "").replace("₩", "")),
+                        "amount": amount,
                     })                    
         
         except Exception as e:
