@@ -22,7 +22,7 @@ class DataCleaner(QtWidgets.QMainWindow):
         self.bank_processors = {
             "KB": KBProcessor(),
             # "Shinhan": ShinhanProcessor(),
-            # "hanacard": HanaCardProcessor(),
+            "hanacard": HanaCardProcessor(),
             "케이뱅크": KbankProcessor()
         }
 

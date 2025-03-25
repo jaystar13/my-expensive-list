@@ -1,17 +1,17 @@
 from processors.bank_processors import BankProcessor
+from processors.response import FinancialTransaction
+
 import os
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import time
 from bs4 import BeautifulSoup
-from processors.response import FinancialTransaction
 
 class KBProcessor(BankProcessor):
     def process(self, file_path, password):
-        print(f"password : {password}")
         service = Service(ChromeDriverManager().install())
         options = webdriver.ChromeOptions()
         options.add_argument("--headless") # 브라우저 UI 없이 실행
