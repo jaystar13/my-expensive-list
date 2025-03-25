@@ -1,4 +1,5 @@
 from processors.bank_processors import BankProcessor
+from processors.response import FinancialTransaction
 
 import os
 import time
@@ -27,7 +28,11 @@ class HanaCardProcessor(BankProcessor):
         time.sleep(3)
 
         page_source = driver.page_source
-        self.cleaner(page_source)
+        driver.quit()
+
+        transactions = self.cleaner(page_source)
+
+        return FinancialTransaction(financial="hana", transactions=transactions)
 
     def cleaner(self, page_source):
         soup = BeautifulSoup(page_source, 'html.parser')
@@ -38,15 +43,23 @@ class HanaCardProcessor(BankProcessor):
         for row in rows:
             cells = row.find_all("td")
             if len(cells) >= 3:  # 최소 3개의 열이 있어야 함
-                date = cells[0].get_text(strip=True)  # 이용일자
+                usage_date = cells[0].get_text(strip=True)  # 이용일자
                 merchant = cells[1].get_text(strip=True)  # 이용가맹점(은행)
                 amount = cells[2].get_text(strip=True)  # 이용금액
                 
                 # 데이터 필터링 (날짜 형식 확인)
-                if "/" in date and amount.replace(",", "").isdigit():
-                    transactions.append((date, merchant, amount))
+                # if "/" in usage_date and amount.replace(",", "").isdigit():
+                #     transactions.append((usage_date, merchant, amount))
 
-        for t in transactions:
-            print(f"이용일자: {t[0]}, 이용가맹점: {t[1]}, 이용금액: {t[2]}")
+                if "/" in usage_date and amount.replace(",", "").isdigit():
+                    transactions.append({
+                        "date": "2025-" + usage_date.replace("/", "-"),
+                        "cardName": "하나카드",
+                        "merchant": merchant,
+                        "amount": int(amount.replace(",", "").replace("₩", "")),
+                    })                    
+
+        # for t in transactions:
+        #     print(f"이용일자: {t[0]}, 이용가맹점: {t[1]}, 이용금액: {t[2]}")
 
         return transactions        

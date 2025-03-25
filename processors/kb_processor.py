@@ -32,7 +32,7 @@ class KBProcessor(BankProcessor):
 
         transactions = self.cleaner(page_source)
 
-        return FinancialTransaction(financial="KB", transactions=transactions)
+        return FinancialTransaction(financial="kb", transactions=transactions)
 
     def cleaner(self, page_source):
         soup = BeautifulSoup(page_source, 'html.parser')

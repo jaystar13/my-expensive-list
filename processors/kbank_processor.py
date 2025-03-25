@@ -38,4 +38,4 @@ class KbankProcessor(BankProcessor):
             print(f"파일을 읽는 중 오류 발생: {e}")
             return None
         
-        return FinancialTransaction(financial="KBank", transactions=transactions)
+        return FinancialTransaction(financial="kbank", transactions=transactions)
