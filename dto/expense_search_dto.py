@@ -5,3 +5,4 @@ class ExpenseSearchDto:
     target_path: str
     target_date: str
     password: str
+    directory_path: str
