@@ -7,7 +7,7 @@ class ExpenseController:
 
     def clean(self, serarchDto: ExpenseSearchDto):
         # 지출 리스트 조회
-        self.expense_service.get_raw_expense_list(serarchDto)
-
+        expense_list = self.expense_service.get_raw_expense_list(serarchDto)
+        print(f"지출내역 리스트 {expense_list}")
         # 지출 리스트 정규화
         # self.service.clear(serarchDto)
