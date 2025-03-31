@@ -8,18 +8,22 @@ class ExpenseService:
     def __init__(self, repository: ExpenseRepository):
         self.expense_repository = repository
 
-    def clear(self, searchDto: ExpenseSearchDto):
-        print(f"service's dto : {searchDto.target_date}")
-
     def get_raw_expense_list(self, searchDto: ExpenseSearchDto):
-        all_expenses = []
+        all_expenses = {}
 
         list_files = FileUtils.list_files(searchDto.directory_path, full_path=True)
         for file in list_files:
             try:
                 reader = ExpenseReaderFactory.get_reader(file, searchDto.password)
-                all_expenses.extend(reader.fetch_expense_list())
+                financial_name = reader.get_financial_name()
+                financial_expenses = reader.fetch_expense_list()
+
+                if financial_name not in all_expenses:
+                    all_expenses[financial_name] = {"financial_name": financial_name, "data": []}
+                
+                all_expenses[financial_name]["data"].extend(financial_expenses)
+
             except ValueError as e:
                 print(f"오류 발생: {e}")
 
-        return json.dumps(all_expenses, ensure_ascii=False, indent=4)
+        return json.dumps(list(all_expenses.values()), ensure_ascii=False, indent=4)
