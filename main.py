@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets, uic
 from dto.expense_search_dto import ExpenseSearchDto
 from controllers.expense_controller import ExpenseController
 from repositories.expese_repository import ExpenseRepository
+from services.expense_parser.expense_transformer import ExpenseTransformer
 from services.expense_service import ExpenseService
 
 class AllMyExpenses(QtWidgets.QMainWindow):
@@ -28,7 +29,8 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
     expense_repository = ExpenseRepository()
-    expense_service = ExpenseService(expense_repository)
+    expense_transformer = ExpenseTransformer()
+    expense_service = ExpenseService(expense_repository, expense_transformer)
     expense_controller = ExpenseController(expense_service)
 
     window = AllMyExpenses(expense_controller)
