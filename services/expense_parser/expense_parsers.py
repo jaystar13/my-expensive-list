@@ -34,7 +34,7 @@ class KBCardParser(BaseParser):
             expense = Expense(
                 usage_date=usage_date,
                 payment_year_month=payment_year_month,
-                payment_method="KB카드",
+                payment_method=entry["cardName"],
                 merchant_name=entry["merchant"],
                 merchant_detail_name="",
                 amount=int(entry["amount"].replace(",", "")),
