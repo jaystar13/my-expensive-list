@@ -12,3 +12,15 @@ class Expense:
 
     def __repr__(self):
         return f"Expense({self.usage_date}, {self.payment_year_month}, {self.payment_method}, {self.merchant_name}, {self.amount})"
+    
+    def to_dict(self):
+        """Expense 객체를 JSON 저장을 위한 딕셔너리로 변환"""
+        return {
+            "usage_date": self.usage_date,
+            "payment_year_month": self.payment_year_month,
+            "payment_method": self.payment_method,
+            "merchant_name": self.merchant_name,
+            "merchant_detail_name": self.merchant_detail_name,
+            "amount": self.amount,
+            "category": self.category,
+        }    

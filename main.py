@@ -28,7 +28,7 @@ class AllMyExpenses(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
-    expense_repository = ExpenseRepository()
+    expense_repository = ExpenseRepository("downloads/clean")
     expense_transformer = ExpenseTransformer()
     expense_service = ExpenseService(expense_repository, expense_transformer)
     expense_controller = ExpenseController(expense_service)

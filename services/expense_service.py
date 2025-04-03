@@ -37,6 +37,12 @@ class ExpenseService:
         expenses = self.expense_transformer.transform(json.loads(raw_data))
         return ExpenseService.ExpenseFilter.apply(expenses, min_amount=1, start_date=searchDto.start_date, end_date=searchDto.end_date)
     
+    def save_expenses(self, searchDto: ExpenseSearchDto):
+        raw_data = self.get_raw_expenses(searchDto)
+        expenses = self.expense_transformer.transform(json.loads(raw_data))
+        filter_expenses = ExpenseService.ExpenseFilter.apply(expenses, min_amount=1, start_date=searchDto.start_date, end_date=searchDto.end_date)
+        self.expense_repository.save_expenses(filter_expenses)
+    
     class ExpenseFilter:
         """ 내부 필터링 클래스 """
         @staticmethod
