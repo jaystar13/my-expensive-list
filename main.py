@@ -20,13 +20,14 @@ class AllMyExpenses(QtWidgets.QMainWindow):
         target_date = self.targetYearMonth.date().toString('yyyy-MM')
         password = self.password.text()
         directory_path = os.path.join(target_path, target_date)
+        raw_directory_path = os.path.join(directory_path, "raw")
 
         expense_repository = ExpenseRepository(directory_path, target_date + "_expenses.json")
         expense_transformer = ExpenseTransformer()
         expense_service = ExpenseService(expense_repository, expense_transformer)
         expense_controller = ExpenseController(expense_service)
 
-        dto = ExpenseSearchDto(target_path, target_date, password, directory_path)
+        dto = ExpenseSearchDto(target_path, target_date, password, directory_path, raw_directory_path)
         expense_controller.clean(dto)
 
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ class ExpenseService:
     def get_raw_expenses(self, searchDto: ExpenseSearchDto):
         all_expenses = {}
 
-        list_files = FileUtils.list_files(searchDto.directory_path, full_path=True)
+        list_files = FileUtils.list_files(searchDto.raw_directory_path, full_path=True)
         for file in list_files:
             try:
                 reader = ExpenseReaderFactory.get_reader(file, searchDto.password)

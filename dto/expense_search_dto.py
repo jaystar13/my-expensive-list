@@ -8,6 +8,7 @@ class ExpenseSearchDto:
     target_date: str
     password: str
     directory_path: str
+    raw_directory_path: str
     start_date: str = None
     end_date: str = None
 
