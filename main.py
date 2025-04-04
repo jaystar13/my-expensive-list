@@ -9,10 +9,9 @@ from services.expense_parser.expense_transformer import ExpenseTransformer
 from services.expense_service import ExpenseService
 
 class AllMyExpenses(QtWidgets.QMainWindow):
-    def __init__(self, expense_controller):
+    def __init__(self):
         super().__init__()
         uic.loadUi("gui/data-cleaner.ui", self)
-        self.expense_controller = expense_controller
 
         self.cleanData.clicked.connect(self.on_execute)
 
@@ -21,19 +20,19 @@ class AllMyExpenses(QtWidgets.QMainWindow):
         target_date = self.targetYearMonth.date().toString('yyyy-MM')
         password = self.password.text()
         directory_path = os.path.join(target_path, target_date)
-        dto = ExpenseSearchDto(target_path, target_date, password, directory_path)
 
+        expense_repository = ExpenseRepository(directory_path, target_date + "_expenses.json")
+        expense_transformer = ExpenseTransformer()
+        expense_service = ExpenseService(expense_repository, expense_transformer)
+        expense_controller = ExpenseController(expense_service)
+
+        dto = ExpenseSearchDto(target_path, target_date, password, directory_path)
         expense_controller.clean(dto)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
-    expense_repository = ExpenseRepository("downloads/clean")
-    expense_transformer = ExpenseTransformer()
-    expense_service = ExpenseService(expense_repository, expense_transformer)
-    expense_controller = ExpenseController(expense_service)
-
-    window = AllMyExpenses(expense_controller)
+    window = AllMyExpenses()
     window.show()
 
     sys.exit(app.exec_())

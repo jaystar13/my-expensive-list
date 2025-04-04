@@ -8,7 +8,7 @@ from email.header import decode_header
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QDateTimeEdit
 
-ATTACH_FOLDER = "downloads/attach"
+ATTACH_FOLDER = "data/expenses"
 
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 

@@ -7,8 +7,4 @@ class ExpenseController:
 
     def clean(self, serarchDto: ExpenseSearchDto):
         # 지출 리스트 조회
-        expense_list = self.expense_service.save_expenses(serarchDto)
-        
-        for e in expense_list:
-            print(e)
-        
+        self.expense_service.save_expenses(serarchDto)

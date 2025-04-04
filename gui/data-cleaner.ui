@@ -63,7 +63,7 @@
       <item>
        <widget class="QLineEdit" name="targetPath">
         <property name="text">
-         <string>downloads/attach</string>
+         <string>data/expenses</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
