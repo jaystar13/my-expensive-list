@@ -14,6 +14,8 @@ from services.expense_reader.financial import Financial
 
 
 class KBankExpenseReader(Financial):
+    VALID_TYPES = {"체크결제", "전자금융"}
+
     def __init__(self, file_path: str, password: str):
         self.file_path = file_path
         self.password = password
@@ -30,22 +32,18 @@ class KBankExpenseReader(Financial):
 
         df = pd.read_excel(decrypted, engine="openpyxl", header=3)
         records = df.to_dict(orient="records")
-        filtered_records = [
+
+        return [
             record
             for record in records
             if self._is_expense(
                 record.get("거래구분", ""),
-                int(
-                    str(record.get("출금금액", "0"))
-                    .replace(",", "")
-                    .replace("원", "")
-                    .strip()
-                    or 0
-                ),
+                self._parse_amount(record.get("출금금액", "0")),
             )
         ]
 
-        return filtered_records
+    def _parse_amount(self, amount_str: str) -> int:
+        return int(str(amount_str).replace(",", "").replace("원", "").strip() or "0")
 
     def _is_expense(self, type: str, amount: int) -> bool:
         if not type in ["체크결제", "전자금융"] or amount < 1000:
