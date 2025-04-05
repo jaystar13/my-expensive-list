@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 from entities.expense import Expense
 from services.expense_parser.base_parser import BaseParser
+from services.expense_parser.category_mapper import get_category_by_merchant
 
 class HanaCardParser(BaseParser):
     def parse(self, data: List[Dict[str, Any]]) -> List[Expense]:
@@ -15,6 +16,7 @@ class HanaCardParser(BaseParser):
                 merchant_name=entry["merchant"],
                 merchant_detail_name="",
                 amount=int(entry["amount"].replace(",", "")),
+                category=get_category_by_merchant(entry["merchant"])
             )
             expenses.append(expense)
         return expenses
@@ -38,6 +40,7 @@ class KBCardParser(BaseParser):
                 merchant_name=entry["merchant"],
                 merchant_detail_name="",
                 amount=int(entry["amount"].replace(",", "")),
+                category=get_category_by_merchant(entry["merchant"])
             )
             expenses.append(expense)
         return expenses
@@ -61,6 +64,7 @@ class KBankParser(BaseParser):
                 merchant_name=entry["적요내용"],
                 merchant_detail_name="",
                 amount=entry["출금금액"],
+                category=get_category_by_merchant(entry["적요내용"])
             )
             expenses.append(expense)
         return expenses

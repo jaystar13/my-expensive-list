@@ -16,19 +16,8 @@ class ExpenseRepository:
 
         file_path = os.path.join(self.storage_path, self.file_name)
 
-        if os.path.exists(file_path):
-            with open(file_path, "r", encoding="utf-8") as file:
-                try:
-                    existing_data = json.load(file)
-                except json.JSONDecodeError:
-                    existing_data = []
-        else:
-            existing_data = []
-
-        # 새로운 데이터 추가
-        new_data = [expense.to_dict() for expense in expenses]
-        all_data = existing_data + new_data
+        data = [expense.to_dict() for expense in expenses]
 
         # 파일 저장
         with open(file_path, "w", encoding="utf-8") as file:
-            json.dump(all_data, file, ensure_ascii=False, indent=4)
+            json.dump(data, file, ensure_ascii=False, indent=4)
