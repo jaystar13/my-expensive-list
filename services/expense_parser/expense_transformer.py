@@ -1,9 +1,14 @@
 from typing import Any, Dict, List
 from entities.expense import Expense
-from services.expense_parser.expense_parsers import HanaCardParser, KBCardParser, KBankParser
+from services.expense_parser.expense_parsers import (
+    HanaCardParser,
+    KBCardParser,
+    KBankParser,
+)
+
 
 class ExpenseTransformer:
-    """ 금융기관별 데이터를 Expense 객체로 변환하는 서비스 """
+    """금융기관별 데이터를 Expense 객체로 변환하는 서비스"""
 
     PARSERS = {
         "hana-card": HanaCardParser(),

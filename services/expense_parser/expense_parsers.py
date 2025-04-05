@@ -3,6 +3,7 @@ from entities.expense import Expense
 from services.expense_parser.base_parser import BaseParser
 from services.expense_parser.category_mapper import get_category_by_merchant
 
+
 class HanaCardParser(BaseParser):
     def parse(self, data: List[Dict[str, Any]]) -> List[Expense]:
         expenses = []
@@ -16,14 +17,14 @@ class HanaCardParser(BaseParser):
                 merchant_name=entry["merchant"],
                 merchant_detail_name="",
                 amount=int(entry["amount"].replace(",", "")),
-                category=get_category_by_merchant(entry["merchant"])
+                category=get_category_by_merchant(entry["merchant"]),
             )
             expenses.append(expense)
         return expenses
 
     @staticmethod
     def _convert_date(date_str: str) -> str:
-        """ 03/12 → 2025-03-12 형식으로 변환 (올해 기준) """
+        """03/12 → 2025-03-12 형식으로 변환 (올해 기준)"""
         return f"2025-{date_str[:2]}-{date_str[3:]}"
 
 
@@ -40,14 +41,14 @@ class KBCardParser(BaseParser):
                 merchant_name=entry["merchant"],
                 merchant_detail_name="",
                 amount=int(entry["amount"].replace(",", "")),
-                category=get_category_by_merchant(entry["merchant"])
+                category=get_category_by_merchant(entry["merchant"]),
             )
             expenses.append(expense)
         return expenses
 
     @staticmethod
     def _convert_date(date_str: str) -> str:
-        """ 25.02.13 → 2025-02-13 """
+        """25.02.13 → 2025-02-13"""
         return "20" + date_str.replace(".", "-")
 
 
@@ -64,7 +65,7 @@ class KBankParser(BaseParser):
                 merchant_name=entry["적요내용"],
                 merchant_detail_name="",
                 amount=entry["출금금액"],
-                category=get_category_by_merchant(entry["적요내용"])
+                category=get_category_by_merchant(entry["적요내용"]),
             )
             expenses.append(expense)
         return expenses
