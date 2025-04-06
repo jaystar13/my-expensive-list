@@ -2,9 +2,11 @@ import os
 import sys
 from PyQt5 import QtWidgets, uic
 
+from config.repository_config import RepositoryConfig
 from dto.expense_search_dto import ExpenseSearchDto
 from controllers.expense_controller import ExpenseController
 from repositories.expense_repository import ExpenseRepository
+from repositories.expense_repository_factory import ExpenseRepositoryFactory
 from services.expense_parser.expense_transformer import ExpenseTransformer
 from services.expense_service import ExpenseService
 
@@ -20,20 +22,28 @@ class AllMyExpenses(QtWidgets.QMainWindow):
         target_path = self.targetPath.text()
         target_date = self.targetYearMonth.date().toString("yyyy-MM")
         password = self.password.text()
+
         directory_path = os.path.join(target_path, target_date)
         raw_directory_path = os.path.join(directory_path, "raw")
+        file_name = target_date + "_expenses.json"
 
-        expense_repository = ExpenseRepository(
-            directory_path, target_date + "_expenses.json"
+        config = RepositoryConfig(
+            storage_type=os.getenv("STORAGE_TYPE", "json"),
+            directory_path=directory_path,
+            file_name=file_name,
+            sheet_id=os.getenv("GOOGLE_SHEET_ID"),
+            credentials_path=os.getenv("GOOGLE_CREDENTIALS_PATH"),
         )
-        expense_transformer = ExpenseTransformer()
-        expense_service = ExpenseService(expense_repository, expense_transformer)
-        expense_controller = ExpenseController(expense_service)
+
+        repository = ExpenseRepositoryFactory.create(config)
+        transformer = ExpenseTransformer()
+        service = ExpenseService(repository, transformer)
+        controller = ExpenseController(service)
 
         dto = ExpenseSearchDto(
             target_path, target_date, password, directory_path, raw_directory_path
         )
-        expense_controller.clean(dto)
+        controller.clean(dto)
 
 
 if __name__ == "__main__":

@@ -3,9 +3,10 @@ import os
 from typing import List
 
 from entities.expense import Expense
+from repositories.db_expense_repository import BaseExpenseRepository
 
 
-class ExpenseRepository:
+class ExpenseRepository(BaseExpenseRepository):
     def __init__(self, storage_path: str, file_name: str):
         self.storage_path = storage_path
         self.file_name = file_name

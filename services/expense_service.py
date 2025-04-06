@@ -1,7 +1,7 @@
 from datetime import datetime
 import json
 from dto.expense_search_dto import ExpenseSearchDto
-from repositories.expese_repository import ExpenseRepository
+from repositories.expense_repository import ExpenseRepository
 from services.expense_parser.expense_transformer import ExpenseTransformer
 from services.expense_reader.expense_reader_factory import ExpenseReaderFactory
 from utils.os_utils import FileUtils
