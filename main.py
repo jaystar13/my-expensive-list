@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets, uic
 
 from dto.expense_search_dto import ExpenseSearchDto
 from controllers.expense_controller import ExpenseController
-from repositories.expese_repository import ExpenseRepository
+from repositories.expense_repository import ExpenseRepository
 from services.expense_parser.expense_transformer import ExpenseTransformer
 from services.expense_service import ExpenseService
 
