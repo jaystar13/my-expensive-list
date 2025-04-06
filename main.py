@@ -1,6 +1,7 @@
 import os
 import sys
 from PyQt5 import QtWidgets, uic
+from dotenv import load_dotenv
 
 from config.repository_config import RepositoryConfig
 from dto.expense_search_dto import ExpenseSearchDto
@@ -9,6 +10,8 @@ from repositories.expense_repository import ExpenseRepository
 from repositories.expense_repository_factory import ExpenseRepositoryFactory
 from services.expense_parser.expense_transformer import ExpenseTransformer
 from services.expense_service import ExpenseService
+
+load_dotenv()
 
 
 class AllMyExpenses(QtWidgets.QMainWindow):
