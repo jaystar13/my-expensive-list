@@ -19,6 +19,5 @@ class ExpenseSearchDto:
         before_date = current_date - relativedelta(months=1)
         start_date = before_date + timedelta(days=14)
         end_date = current_date + timedelta(days=13)
-        print(f"start_date = {start_date}, end_date = {end_date}")
         object.__setattr__(self, "start_date", start_date.strftime("%Y-%m-%d"))
         object.__setattr__(self, "end_date", end_date.strftime("%Y-%m-%d"))
