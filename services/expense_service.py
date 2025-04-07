@@ -55,7 +55,10 @@ class ExpenseService:
             start_date=searchDto.start_date,
             end_date=searchDto.end_date,
         )
-        self.expense_repository.save_expenses(filter_expenses)
+        sorted_expenses = sorted(
+            filter_expenses, key=lambda x: datetime.strptime(x.usage_date, "%Y-%m-%d")
+        )
+        self.expense_repository.save_expenses(sorted_expenses)
 
     class ExpenseFilter:
         """내부 필터링 클래스"""
