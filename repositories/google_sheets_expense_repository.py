@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -12,6 +13,7 @@ class GoogleSheetsExpenseRepository(BaseExpenseRepository):
 
     def save_expenses(self, expenses: List[Expense]):
         """지출 내역 Google 스프레드시트에 저장"""
+
         scope = [
             "https://spreadsheets.google.com/feeds",
             "https://www.googleapis.com/auth/spreadsheets",
@@ -34,17 +36,20 @@ class GoogleSheetsExpenseRepository(BaseExpenseRepository):
             "이용금액",
             "구분",
         ]
+
+        rows = [
+            [
+                e.usage_date,
+                e.payment_year_month,
+                e.payment_method,
+                e.merchant_name,
+                e.merchant_detail_name,
+                e.amount,
+                e.category,
+            ]
+            for e in expenses
+        ]
+
         sheet.clear()
         sheet.append_row(headers)
-
-        for expense in expenses:
-            row = [
-                expense.usage_date,
-                expense.payment_year_month,
-                expense.payment_method,
-                expense.merchant_name,
-                expense.merchant_detail_name,
-                expense.amount,
-                expense.category,
-            ]
-            sheet.append_row(row)
+        sheet.append_rows(rows)
